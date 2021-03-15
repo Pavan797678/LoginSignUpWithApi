@@ -304,7 +304,7 @@ export default class signUp extends Component {
 
           <View style={styles.alreadyAccountView}>
             <TouchableOpacity onPress={this.goToLoginScreen}>
-              <Text>Already Register?Login</Text>
+              <Text style={{ fontFamily: 'Redressed-Regular',fontSize: 18}}>Already Register?Login</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.mainSignUp}>
               <Image
@@ -314,7 +314,7 @@ export default class signUp extends Component {
           </View>
         </View>
         <View style={{height: '20%', marginVertical: 50}}>
-          <Text style={{marginHorizontal: 80, textAlign: 'center'}}>
+          <Text style={{marginHorizontal: 80, textAlign: 'center', fontFamily: 'Redressed-Regular',fontSize: 16}}>
             By Signing up you agree to our Terms of services and Privacy Policy
           </Text>
         </View>
