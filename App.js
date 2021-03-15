@@ -20,12 +20,11 @@ class App extends Component {
    componentDidMount(){
 
      getUserData().then((res)=>{
-       console.log(res, "getUserDataResponse")
-       if(res){
+       console.log(res, "getUserDataResponse")      
          this.setState({
            isLoggedIn:true
          })
-       }
+       
      }).catch(error=>console.log(error))
    }
 

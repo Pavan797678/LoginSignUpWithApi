@@ -9,6 +9,7 @@ import {
   StatusBar,
   Button,
   Pressable,
+  PermissionsAndroid,
 } from 'react-native';
 
 import {showMessage, hideMessage} from 'react-native-flash-message';
@@ -22,6 +23,7 @@ import api from '../../apis';
 import Loader from '../../Component/Loader';
 import navigationStrings from '../../constants/navigationStrings';
 import colors from '../../styles/colors';
+import * as ImagePicker from 'react-native-image-picker';
 
 export default class signUp extends Component {
   constructor(props) {
@@ -35,6 +37,7 @@ export default class signUp extends Component {
       userPassword: '',
       userConfirmPassword: '',
       isLoading: false,
+      resourceimage: imagePath.profile_image,
     };
   }
   _onChangeText(key) {
@@ -97,7 +100,7 @@ export default class signUp extends Component {
   };
 
   mainSignUp = () => {
-    const {username, userEmail, userPassword, userConfirmPassword} = this.state;
+    const {username, userEmail, userPassword} = this.state;
     const {navigation} = this.props;
     if (this.isValidData()) {
       this.setState({
@@ -141,8 +144,115 @@ export default class signUp extends Component {
     navigation.navigate(navigationStrings.LOGIN);
   };
 
+  _profileimage = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+        ImagePicker.launchCamera(
+          {
+            mediaType: 'photo',
+            includeBase64: false,
+            maxHeight: 200,
+            maxWidth: 200,
+            saveToPhotos: true,
+          },
+          (response) => {
+            console.log(response);
+            this.setState({resourcePath: response});
+          },
+        );
+        this.setState({isModalVisibal: false});
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  _profileImageFromGallery = async () => {
+    const {resourcePath} = this.state;
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: 'Cool Photo App Gallery Permission',
+          message:
+            'Cool Photo App needs access to your gallery ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the gallery');
+        ImagePicker.launchImageLibrary(
+          {
+            mediaType: 'photo',
+            includeBase64: false,
+            maxHeight: 200,
+            maxWidth: 200,
+            saveToPhotos: true,
+          },
+          (response) => {
+            // console.log(response);
+            // this.setState({resourcePath: response.uri});
+
+            const apiData = new FormData();
+
+            apiData.append('image', {
+              uri: response.uri,
+              type: response.type,
+              name: response.fileName,
+            });
+            api
+              .uploadImage(apiData)
+              .then((res) => {
+                showMessage({
+                  type: 'success',
+                  icon: 'success',
+                  message: 'Image Upload Successfully',
+                });
+                this.setState({
+                  resourceimage:response
+                });
+              })
+              .catch((error) => {
+                alert(JSON.stringify(error));
+                showMessage({
+                  type: 'danger',
+                  icon: 'danger',
+                  message: 'faild to upload image',
+                });
+              });
+          },
+        );
+        // this.setState({isModalVisibal: false});
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   render() {
-    const {text, isLoading} = this.state;
+    const {text, isLoading, resourceimage} = this.state;
+    // console.log(resourcePath.uri,"image")
+    console.log();
     return (
       <View style={{flex: 1, backgroundColor: colors.themeColor}}>
         <View style={styles.headerView}>
@@ -156,12 +266,9 @@ export default class signUp extends Component {
           </View>
         </View>
         <View style={styles.profileView}>
-          <Image
-            style={styles.profileImage}
-            source={{
-              uri:
-                'https://i.pinimg.com/236x/34/c8/d4/34c8d49902cd59e235e82cc962f4f3f0.jpg',
-            }}></Image>
+          <TouchableOpacity onPress={this._profileImageFromGallery}>
+            <Image style={styles.profileImage} source={resourceimage}></Image>
+          </TouchableOpacity>
         </View>
         <View style={{height: '60%'}}>
           <TextInput
