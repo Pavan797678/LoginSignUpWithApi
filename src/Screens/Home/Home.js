@@ -11,7 +11,9 @@ import {
   Pressable,
 } from 'react-native';
 import navigationStrings from '../../constants/navigationStrings';
+import { UserContext } from '../../context/context';
 import { clearUserData } from '../../utils/utils';
+
 
 
 export default class Home extends Component {
@@ -22,11 +24,10 @@ export default class Home extends Component {
     
     };
   }
+  static contextType=UserContext;
   userLogout=()=>{
-      const{navigation}=this.props
-      clearUserData().then(res=>{
-       navigation.navigate(navigationStrings.LOGIN)
-      }).catch(error=>console.log(error))
+    
+      this.context.onLogout();
   }
 
   render() {

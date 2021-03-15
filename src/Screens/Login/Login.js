@@ -17,6 +17,7 @@ import Loader from '../../Component/Loader';
 import navigationStrings from '../../constants/navigationStrings';
 import {showMessage, hideMessage} from 'react-native-flash-message';
 import colors from '../../styles/colors';
+import { UserContext } from '../../context/context';
 
 export default class signUp extends Component {
   constructor(props) {
@@ -28,6 +29,9 @@ export default class signUp extends Component {
       isLoading: false,
     };
   }
+  
+static contextType=UserContext;
+
   _onChangeText(key) {
     return (value) => {
       this.setState({
@@ -75,7 +79,8 @@ export default class signUp extends Component {
             icon: 'success',
             message: 'Login Successfully',
           });
-          navigation.navigate(navigationStrings.HOME)
+         
+              this.context.onLogin();
         })
         .catch((error) => {
           this.setState({

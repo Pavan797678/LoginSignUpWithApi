@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {View,Button} from 'react-native';
 import Routes from './src/navigation/Routes';
 import FlashMessage from "react-native-flash-message";
-import { getUserData } from './src/utils/utils';
+import {clearUserData, getUserData } from './src/utils/utils';
+import { UserContext } from './src/context/context';
 
 
 
@@ -20,25 +21,44 @@ class App extends Component {
    componentDidMount(){
 
      getUserData().then((res)=>{
-       console.log(res, "getUserDataResponse")      
-         this.setState({
-           isLoggedIn:true
-         })
+        if(res){
+          this.setState({
+            isLoggedIn:true
+          })
+        }
        
-     }).catch(error=>console.log(error))
+     })
    }
 
+   onLogin=()=>{
+     this.setState({
+       isLoggedIn:true 
+     })
+   }
 
+   onLogout=()=>{ 
+
+    this.setState({
+      isLoggedIn:false 
+    })
+    clearUserData();
+
+  }
 
   render() {
-    const {isLoggedIn}=this.state
-    console.log(isLoggedIn, "Render:B isLoggedIn")
+    // const {isLoggedIn}=this.state
+    // console.log(isLoggedIn, "Render:B isLoggedIn")
     return (
-      <View style={{ flex: 1 }}>
-      <Routes isLoggedIn={isLoggedIn} />
+
+
+<UserContext.Provider value={
+{isLoggedIn:this.state.isLoggedIn, onLogin:this.onLogin,onLogout:this.onLogout}
+}>
+      <Routes  />
       
       <FlashMessage position="top" /> 
-    </View>
+      </UserContext.Provider>
+
     );
   }
 }
