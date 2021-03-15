@@ -24,6 +24,9 @@ import Loader from '../../Component/Loader';
 import navigationStrings from '../../constants/navigationStrings';
 import colors from '../../styles/colors';
 import * as ImagePicker from 'react-native-image-picker';
+import Headers from '../../Component/Header';
+
+  
 
 export default class signUp extends Component {
   constructor(props) {
@@ -38,6 +41,8 @@ export default class signUp extends Component {
       userConfirmPassword: '',
       isLoading: false,
       resourceimage: imagePath.profile_image,
+      screenName:'SignUp',
+      isBackButton:true
     };
   }
   _onChangeText(key) {
@@ -250,21 +255,12 @@ export default class signUp extends Component {
   };
 
   render() {
-    const {text, isLoading, resourceimage} = this.state;
+    const {text, isLoading, resourceimage,screenName ,isBackButton} = this.state;
     // console.log(resourcePath.uri,"image")
     console.log();
     return (
       <View style={{flex: 1, backgroundColor: colors.themeColor}}>
-        <View style={styles.headerView}>
-          <TouchableOpacity onPress={this.goToLoginScreen}>
-            <Image
-              style={styles.backButton}
-              source={imagePath.backarrow}></Image>
-          </TouchableOpacity>
-          <View style={{width: '100%'}}>
-            <Text style={styles.HeaderTitleText}>Sign Up</Text>
-          </View>
-        </View>
+        <Headers screenName={screenName} isBackButton={isBackButton}/>
         <View style={styles.profileView}>
           <TouchableOpacity onPress={this._profileImageFromGallery}>
             <Image style={styles.profileImage} source={resourceimage}></Image>
@@ -330,9 +326,7 @@ export default class signUp extends Component {
 }
 
 const styles = StyleSheet.create({
-  headerView: {
-    marginVertical: 10,
-  },
+  
   profileImage: {
     height: 100,
     width: 100,
@@ -345,18 +339,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  HeaderTitleText: {
-    fontFamily: 'Redressed-Regular',
-    fontSize: 25,
-    textAlign: 'center',
-  },
-  backButton: {
-    height: 22,
-    width: 22,
-    position: 'absolute',
-    marginTop: 10,
-    marginHorizontal: 20,
-  },
+  
+ 
   userNameField: {
     backgroundColor: 'white',
     height: 50,

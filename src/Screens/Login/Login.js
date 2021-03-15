@@ -18,6 +18,9 @@ import navigationStrings from '../../constants/navigationStrings';
 import {showMessage, hideMessage} from 'react-native-flash-message';
 import colors from '../../styles/colors';
 import { UserContext } from '../../context/context';
+import Buttons from '../../Component/Buttons'
+import Headers from '../../Component/Header';
+
 
 export default class signUp extends Component {
   constructor(props) {
@@ -27,6 +30,8 @@ export default class signUp extends Component {
       userEmail: '',
       userPassword: '',
       isLoading: false,
+      screenName:'Login',
+     
     };
   }
   
@@ -101,13 +106,10 @@ static contextType=UserContext;
 
 
   render() {
-    const {isLoading} = this.state;
+    const {isLoading,screenName,isBackButton} = this.state;
     return (
       <View style={{flex: 1}}>
-        <View style={styles.headerView}>
-          {/* <Image style={styles.backButton} source={imagePath.backarrow}></Image> */}
-          <Text style={styles.HeaderTitleText}>Sign In</Text>
-        </View>
+       <Headers screenName={screenName} />
         <View style={styles.profileView}>
           <Image
             style={styles.profileImage}
@@ -128,9 +130,7 @@ static contextType=UserContext;
             onChangeText={this._onChangeText('userPassword')}
           />
           <TouchableOpacity onPress={this.mainLogin}>
-            <View style={styles.signInButtonView}>
-              <Text style={{color: colors.buttonTextColor}}>Sign In</Text>
-            </View>
+             <Buttons/>
           </TouchableOpacity>
 
           <View style={styles.lastLoginView}>
@@ -198,14 +198,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     marginVertical: 40,
   },
-  signInButtonView: {
-    backgroundColor: colors.buttonColor,
-    height: 45,
-    marginHorizontal: 50,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+ 
   facebookLoginImage: {
     height: 30,
     width: 30,
